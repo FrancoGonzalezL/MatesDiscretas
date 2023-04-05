@@ -23,8 +23,8 @@ int main(){
     int result = F(n, valores);
     int impares=0;
     for(int i=0;i<n;i+=2){impares+=valores[i];}
-    if(impares==result){for(int i=0;i<n;i+=2){cout<<valores[i]<<" ";}}
-    else{for(int i=1;i<n;i+=2){cout<<valores[i]<<" ";}}
+    if(impares==result){for(int i=0;i<n;i+=2){cout<<i+1<<" ";}}
+    else{for(int i=1;i<n;i+=2){cout<<i+1<<" ";}}
     cout << endl << result << endl;
     return 0;
 }
