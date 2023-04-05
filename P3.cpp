@@ -20,6 +20,11 @@ int main(){
         int num; cin >> num;
         valores[i]=num;}
 
-    cout << F(n, valores) << endl;
+    int result = F(n, valores);
+    int impares=0;
+    for(int i=0;i<n;i+=2){impares+=valores[i];}
+    if(impares==result){for(int i=0;i<n;i+=2){cout<<valores[i]<<" ";}}
+    else{for(int i=1;i<n;i+=2){cout<<valores[i]<<" ";}}
+    cout << endl << result << endl;
     return 0;
 }
