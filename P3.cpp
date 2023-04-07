@@ -36,15 +36,13 @@ int main(){
     int n;cin >> n;int valores[n];
     for (int i = 0; i < n; i++){int num; cin >> num;valores[i]=num;}
 
-    int suma=0;
     vector<int> result = F(n, valores);
 
+    int suma=0;
     for(auto itr = result.begin(); itr != result.end(); itr++){
-        cout<<*itr+1<<" ";
-        suma+=valores[*itr];
+        cout<< *itr+1 <<" ";
+        suma+= valores[*itr];
     }
-    cout<<endl<<suma;
-
-    cout << endl;
+    cout<<endl<< suma <<endl;
     return 0;
 }
