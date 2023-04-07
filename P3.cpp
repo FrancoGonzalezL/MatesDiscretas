@@ -1,30 +1,50 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int F(int n, int array[]){
+vector<int> F(int n, int array[]){
     if (n==2){
-        return max(array[0],array[1]);}
+        vector<int> posiciones;
+        if (array[0]>=array[1]){posiciones.push_back(0);}
+        else{posiciones.push_back(1);}
+
+        return posiciones;}
     else if (n == 3){
-        return max(array[1], array[0]+array[2]);}
+        vector<int> posiciones;
+        if (array[0]+array[2]>=array[1]){
+            posiciones.push_back(0);posiciones.push_back(2);
+            return posiciones;}
+        else{
+            posiciones.push_back(1);
+            return posiciones;}
+        }
     else{
-        return max(F(n-1, array), F(n-2, array) + array[n-1]);}
+        vector<int> pos1 = F(n-1,array);
+        vector<int> pos2 = F(n-2,array);
+        int suma1 = 0;
+        int suma2 = 0;
+        for(auto itr = pos1.begin(); itr != pos1.end(); itr++){suma1+=*itr;}
+        for(auto itr = pos2.begin(); itr != pos2.end(); itr++){suma2+=*itr;}
+        if(suma2+array[n-1]>=suma1){
+            pos2.push_back(n-1);
+            return pos2;}
+        else{return pos1;}
+        }
 }
 
 int main(){
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin >> n;
-    int valores[n];
+    int n;cin >> n;int valores[n];
+    for (int i = 0; i < n; i++){int num; cin >> num;valores[i]=num;}
 
-    for (int i = 0; i < n; i++){
-        int num; cin >> num;
-        valores[i]=num;}
+    int suma=0;
+    vector<int> result = F(n, valores);
 
-    int result = F(n, valores);
-    int impares=0;
-    for(int i=0;i<n;i+=2){impares+=valores[i];}
-    if(impares==result){for(int i=0;i<n;i+=2){cout<<i+1<<" ";}}
-    else{for(int i=1;i<n;i+=2){cout<<i+1<<" ";}}
-    cout << endl << result << endl;
+    for(auto itr = result.begin(); itr != result.end(); itr++){
+        cout<<*itr+1<<" ";
+        suma+=valores[*itr];
+    }
+    cout<<endl<<suma;
+
+    cout << endl;
     return 0;
 }
