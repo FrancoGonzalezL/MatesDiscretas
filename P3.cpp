@@ -60,9 +60,13 @@ int main(){
 
     int suma=0;
     for(auto itr = result.begin(); itr != result.end(); itr++){
-        cout<< *itr+1 <<" ";
         suma+= valores[*itr];
     }
-    cout<<endl<< suma <<endl;
+
+    if (suma<0){cout<<0<<endl<<0<<endl;}
+    else{for(auto itr = result.begin();itr!=result.end();itr++)
+        cout<< *itr+1 <<" ";
+        cout<<endl<< suma <<endl;}
+
     return 0;
 }
