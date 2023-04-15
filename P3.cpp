@@ -1,72 +1,51 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<int> F(int n, int array[]){
+vector<int> F(int n, int lista[], int &Sum){
 
-    if(n==1){
+    if(n==0){
         vector<int> posiciones;
-        posiciones.push_back(0);
+        Sum = 0;
         return posiciones;}
 
-    else if (n==2){
+    else if (n==1){
         vector<int> posiciones;
-
-        if (array[0]>=array[1]){
-            posiciones.push_back(0);
-            return posiciones;}
-
-        else{
-            posiciones.push_back(1);
-            return posiciones;}
-            }
+        Sum = max(lista[0],0);
+        if (Sum==lista[0]){posiciones.push_back(0);}
+        return posiciones;}
 
     else{
-        vector<int> pos1 = F(n-1,array);
-        vector<int> pos2 = F(n-2,array);
-        int suma1 = 0, suma2 = 0, suma3 = array[n-1];
-        for(auto itr = pos1.begin(); itr != pos1.end(); itr++){suma1+=array[*itr];}
-        for(auto itr = pos2.begin(); itr != pos2.end(); itr++){suma2+=array[*itr];}
-        suma2 += suma3;
+        vector<int> Fn_1 = F(n-1,lista,Sum);
+        int sumFn_1 = Sum;
+        vector<int> Fn_2 = F(n-2,lista,Sum);
+        int sumFn_2 = Sum + lista[n-1];
+        int sumFn_3 = lista[n-1];
 
-        if (suma1>=suma2){
+        Sum = max(max(sumFn_1,sumFn_2),sumFn_3);
 
-            if(suma1>=suma3){
-            return pos1;}
-
-            else{
-            vector<int> pos3;
-            pos3.push_back(n-1);
-            return pos3;}
-        }
+        if     (Sum == sumFn_1){return Fn_1;}
+        else if(Sum == sumFn_2){
+            Fn_2.push_back(n-1);
+            return Fn_2;}
         else{
-
-            if(suma2>=suma3){
-            pos2.push_back(n-1);
-            return pos2;}
-
-            else{
-            vector<int> pos3;
-            pos3.push_back(n-1);
-            return pos3;}
+            vector<int> Fn;
+            Fn.push_back(n-1);
+            return Fn;}
         }
-    }
 }
 
 int main(){
-    int n;cin >> n;int valores[n];
-    for (int i = 0; i < n; i++){int num; cin >> num;valores[i]=num;}
+    int n;cin >> n;int Lista[n];
+    for (int i = 0; i < n; i++){int num; cin >> num;Lista[i]=num;}
 
-    vector<int> result = F(n, valores);
+    int suma;
+    vector<int> MaximaSat = F(n, Lista, suma);
 
-    int suma=0;
-    for(auto itr = result.begin(); itr != result.end(); itr++){
-        suma+= valores[*itr];
-    }
-
-    if (suma<0){cout<<0<<endl<<0<<endl;}
-    else{for(auto itr = result.begin();itr!=result.end();itr++)
-        cout<< *itr+1 <<" ";
-        cout<<endl<< suma <<endl;}
+    if(MaximaSat.size()>0){
+    for(int posicion: MaximaSat){
+        cout<< posicion + 1 <<" ";}
+    }else{cout<<0;}
+    cout<<endl<<suma<<endl;
 
     return 0;
 }
