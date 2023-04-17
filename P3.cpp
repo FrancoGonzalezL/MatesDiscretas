@@ -19,18 +19,14 @@ vector<int> F(int n, int lista[], int &Sum){
         int sumFn_1 = Sum;
         vector<int> Fn_2 = F(n-2,lista,Sum);
         int sumFn_2 = Sum + lista[n-1];
-        int sumFn_3 = lista[n-1];
 
-        Sum = max(max(sumFn_1,sumFn_2),sumFn_3);
+        Sum = max(sumFn_1,sumFn_2);
 
-        if     (Sum == sumFn_1){return Fn_1;}
-        else if(Sum == sumFn_2){
+        if(Sum == sumFn_1){
+            return Fn_1;
+        }else{
             Fn_2.push_back(n-1);
             return Fn_2;}
-        else{
-            vector<int> Fn;
-            Fn.push_back(n-1);
-            return Fn;}
         }
 }
 
