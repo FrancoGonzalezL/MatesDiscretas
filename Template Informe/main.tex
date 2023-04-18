@@ -91,9 +91,9 @@ def esTautologia(p):
 Probaremos si el algoritmo anterior es correcto:
 \begin{proof}
 
-    PDQ: $\neg \phi$ es insatisfacible $\Leftrightarrow \phi$ es tautología
+    PDQ: $\neg \phi$ es insatisfactible $\Leftrightarrow \phi$ es tautología
     
-    $\neg \phi$ es insatisfacible $\Leftrightarrow (\emptyset \cup \{\neg \phi\})$ es insatisfacible
+    $\neg \phi$ es insatisfactible $\Leftrightarrow (\emptyset \cup \{\neg \phi\})$ es insatisfactible
     
     $\hspace{33mm} \Leftrightarrow \emptyset \models \phi$
 
@@ -115,9 +115,9 @@ def equivalentes(p, q):
 Probaremos si el algoritmo anterior es correcto:
 
 \begin{proof}
-    PDQ: $\neg ((\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi))$ es insatisfacible $\Leftrightarrow \phi \equiv \varphi$
+    PDQ: $\neg ((\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi))$ es insatisfactible $\Leftrightarrow \phi \equiv \varphi$
 
-    $\neg ((\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi))$ es insatisfacible $\Leftrightarrow (\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi)$ es Tautología
+    $\neg ((\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi))$ es insatisfactible $\Leftrightarrow (\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi)$ es Tautología
 
     $\hspace{67mm} \Leftrightarrow (\phi \Rightarrow \varphi) \land (\varphi \Rightarrow \phi)$ es Tautología
 
@@ -141,66 +141,47 @@ Si $A(\phi')$ insatisfacible $\Rightarrow \sigma(\phi_1)=0$\\
 
 Luego $\phi''$ tal que $\sigma(\phi_1) =$ \{valor con el que es satisfacible\} y $\sigma(\phi_2)=1$, se repite el proceso anterior n veces hasta encontrar todas las valuaciones $\sigma (\phi_k)$, $k\in {1,...,n}$.\\
 \begin{proof}
-	Para probar la correctitud se procedera por el principio de inducción:\\
+	Para probar la correctitud se procederá por el principio de inducción:\\
 	\fbox{Caso Base:}\\
-Sea $\phi$ una formula lógica con $\phi_{1}$ su única proposición y se sabe que existe $\sigma(\phi_1) $ tal que $\sigma(\phi) = 1$. Sea entonces $\phi'$ tal que $\sigma(\phi_1) = 1$, como la fórmula depende solo de $\phi_1$, si con $\sigma(\phi) = 1$ se cumple que $A(\phi')$ entrega satisfacible también se cumple que $\sigma(\phi')=1$, por el contrario si $A(\phi')$ es insatisfacible entonces vasta con tomar $\sigma(\phi) = 0$, con esa vaulacion se tendria el otro caso.\\
+Sea $\phi$ una formula lógica con $\phi_{1}$ su única proposición y se sabe que existe $\sigma(\phi_1) $ tal que $\sigma(\phi) = 1$. Sea entonces $\phi'$ tal que $\sigma(\phi_1) = 1$, como la fórmula depende solo de $\phi_1$, si con $\sigma(\phi) = 1$ se cumple que $A(\phi')$ entrega satisfacible también se cumple que $\sigma(\phi')=1$, por el contrario si $A(\phi')$ es insatisfacible entonces basta con tomar $\sigma(\phi) = 0$, con esa valuación se tendría el otro caso.\\
 	\fbox{Caso Inductivo:}\\
-Supongamos que existen n-1 valuaciones ${\sigma(\phi_1),...,\sigma(\phi_{n-1})}$ con las que se cumple $A(\phi^{(n-1)})$ entrega satisfacible. Como se sabe que $\phi^{(n-1)}$ es satisfacible entonces debe existir una valuacion $\sigma(\phi_n)$ tal que $\sigma(\phi^{(n-1)})=1$. Entonces para encontrar la n-ésima valuación vasta con tomar $\phi^{(n)}$ tal que $\sigma(\phi_n)=1$, si con esa valuacion $A(\phi^{(n)})$ entrega que es satisfacible entonces encontramos todas las valuaciones con las que $\sigma(\phi)=1$. En caso de que $A(\phi_{(n)})$ entregue insatisfacible, vasta tomar $\sigma(\phi_n)=0$.\\
+Supongamos que existen n-1 valuaciones ${\sigma(\phi_1),...,\sigma(\phi_{n-1})}$ con las que se cumple $A(\phi^{(n-1)})$ entrega satisfacible. Como se sabe que $\phi^{(n-1)}$ es satisfacible entonces debe existir una valuación $\sigma(\phi_n)$ tal que $\sigma(\phi^{(n-1)})=1$. Entonces para encontrar la n-ésima valuación basta con tomar $\phi^{(n)}$ tal que $\sigma(\phi_n)=1$, si con esa valuación $A(\phi^{(n)})$ entrega que es satisfacible entonces encontramos todas las valuaciones con las que $\sigma(\phi)=1$. En caso de que $A(\phi_{(n)})$ entregue insatisfacible, basta tomar $\sigma(\phi_n)=0$.\\
 \end{proof}
 El algoritmo anterior nos entrega las n valuaciones de las variables de la formula proposicional con solo n llamadas.\\
 \newpage
 
 \subsection*{2.}
-Para que $\sigma(\phi_i)=1$ se necesita que $\sigma(a_i)=1$ o $\sigma(b_i)=1$, pero si ambos valoran 1 entonces $\sigma(\phi_i)=0$ y $\sigma(\phi_{i+1})=1$. Definimos $p \wedge q = \neg(\neg p \vee \neg q)$. \\
+Notemos que $\sigma(a_i) = \sigma(b_i)$ es un factor importante al momento de sumar los números binarios, por lo que necesitamos definir una función auxiliar que indique si esto se cumple o no. Esto se consigue directamente de reescribir y manipular $a_i$ XOR $b_i$:\\
+$$iguales_i = \neg(\neg a_i \vee \neg b_i) \vee \neg(a_i\vee b_i) $$\\
+Donde $\sigma(iguales_i) = 1$ si y solo si $\sigma(a_i) = \sigma(b_i)$.\\
 
-Se tiene que existen 3 casos posibles para que $\sigma(\phi_i) = 1$:
-\begin{itemize}
-    \item Que ($\sigma(a_{i-1}) = 0$, $\sigma(b_{i-1}) = 0$ ó $\sigma(a_{i-1}) = 1$, $\sigma(b_{i-1}) = 0$ ó $\sigma(a_{i-1}) = 0$, $\sigma(b_{i-1}) = 1$) y ($\sigma(a_{i}) = 1$, $\sigma(b_{i}) = 0$) ó ($\sigma(a_{i}) = 0$, $\sigma(b_{i}) = 1$)
-    
-    Donde lógicamente esto se escribe:
-    
-    $[((a_i \land \neg b_i) \vee (\neg a_i \land b_i)) \land \neg(a_{i-1} \land b_{i-1})]$ 
+Otro factor importante es cuando ocurre lo que denominamos 'arrastre', lo cual ocurre solo de las siguentes formas para este caso:
+($1 + 1 = 0$ con arrastre) y ($1 + 1 + 1 = 1$ con arrastre). Lo que hace el arrastre, en esencia, es que si ocurren una de las sumas anteriormente descritas entonces a la siguiente posición se la suma un $1$ extra. Definimos lógicamente si es que se 'arrastró' o no un $1$ desde la posición i-1 hasta la posición i como la función auxiliar siguente:
 
-    $= [(a_i \land \neg b_i) \land \neg(a_{i-1} \land b_{i-1})] \vee [(\neg a_i \land b_i) \land \neg(a_{i-1} \land b_{i-1})]$
-    
-    $= [a_i \wedge \neg (b_i \vee (a_{i-1} \wedge b_{i-1}))] \vee [b_i \wedge \neg (a_i\vee (a_{i-1} \wedge b_{i-1}) )]$
-    
-    \item Que $\sigma(a_{i-1}) = 1$, $\sigma(b_{i-1}) = 1$ y $\sigma(a_{i}) = 0$, $\sigma(b_{i}) = 0$
+$$arrastre_i =  \neg ( \phi_{i-1} \vee iguales _{i-1} ) \vee \neg(\neg a_{i-1} \vee \neg b_{i-1}) $$
 
-    Donde lógicamente esto se escribe:
 
-    $(\neg a_i \land \neg b_i) \land (a_{i-1} \land b_{i-1}) = [(a_{i-1}\wedge b_{i-1})\wedge \neg(a_i \vee b_i)]$
+Donde $\sigma(arrastre_i) = 1$ si y solo si se arrastró un $1$ desde la posición i-1 hacia la posición i. 
 
-    \item Que $\sigma(a_{i-1}) = 1$, $\sigma(b_{i-1}) = 1$ y $\sigma(a_{i}) = 1$, $\sigma(b_{i}) = 1$
+\vspace{5mm}
 
-    Donde lógicamente esto se escribe:
+Dadas las definiciones anteriores, construimos nuestras fórmulas $\phi_i$, distinguendo los siguentes casos:\\
 
-    $[a_i \wedge b_i \wedge (a_{i-1}\wedge b_{i-1})]$
-\end{itemize}
+\fbox{Caso inicial} (i=0) Para este caso, $\sigma(\phi_i) = 1$ ssi $\sigma(a_i) \neq \sigma(b_i)$
 
-Luego la unión de todos estos casos y además definiendo los casos de los extremo, queda dado por:\\
+$$\Rightarrow \phi_i = \neg iguales_i \textit{ , donde } i=0$$
 
-Caso Base: $i = 0$
-\begin{equation}
-    \sigma(\phi_0) = 
-    \sigma((a_0 \wedge \neg b_0) \vee (b_0 \wedge \neg a_0))
-\end{equation}
+\fbox{Caso intermedio} ($i\in \{1,...,n-1\}$) (Dado $n\geq2$) Necesitamos que $\sigma(\phi_i) = 1$ ssi  $\sigma(a_i) \neq \sigma(b_i)$ y que no haya ocurrido algun arrastre hacia la posición i, o que sí haya ocurrido arrastre hacia la posición i, pero que se cumpla que $\sigma(a_i) = \sigma(b_i)$. Es decir:
 
-Caso Intermedio:  $i={1,...,n-1}$
-\begin{equation}
-    \sigma(\phi_i) = \sigma
-    \begin{pmatrix}
-        [a_i \wedge \neg (b_i \vee (a_{i-1} \wedge b_{i-1}))] \\
-        \vee [b_i \wedge \neg (a_i\vee (a_{i-1} \wedge b_{i-1}) )] \\
-        \vee [(a_{i-1}\wedge b_{i-1})\wedge \neg(a_i \vee b_i)] \\
-        \vee [a_i \wedge b_i \wedge (a_{i-1}\wedge b_{i-1})]
-    \end{pmatrix}
-\end{equation}
+$$\phi_i = \neg(iguales_i \vee arrastre_i) \vee \neg( \neg arrastre_i  \vee \neg iguales_i ) \textit{ , donde } i\in \{1,...,n-1\}$$
 
-Caso Final: $i = n$
-\begin{equation}
-    \sigma(\phi_n) = \sigma(a_{n-1}\land b_{n-1})
-\end{equation}
+\fbox{Caso final} (i=n): No existen $a_n$ ni $b_n$ para compararlos entre ellos, y notamos que $\phi_{i=n}$ depende unicamente del arrastre que haya ocurrido desde la posición anterior, de la siguiente forma:
+
+$$\phi_i = arrastre_i \textit{ , donde } i=n$$
+
+Con esto se han construido, para todo $i \in \{0,1,...,n-1,n\}$, los $\phi_i$ tales que: $\sigma(\phi_i) = 1$ ssi el i-ésimo bit de la suma es un 1. Notemos que las construcciones fueron expresadas solo a base de los operadores $\{\neg,\vee\}$ (incluyendo las funciones auxiliares, las cuales también fueron definidas solo a base de los operadores indicados), con lo que se cumple con la restricción dada.
+
+
 
 
 \newpage
@@ -233,7 +214,7 @@ $$a\geq b := \exists k, +(b,k,a)$$    %   k pertenece a los naturales (>=0)
  4. El conjunto de todos los pares $(p,q)$ de números primos gemelos. Donde los números primos $(p,q)$ son números primos gemelos si, siendo $q>p$, se cumple $q-p=2$:
 Se define:
 $$x \neq y := x < y \vee y < x$$
-$$Primo(x):=\forall z,(Uno(z) \Rightarrow z|x ) \wedge \forall z, (\neg Uno(z)\wedge z\neq x \Rightarrow \neg z|x ) \wedge (x|x \wedge \neg Uno(x))$$
+ $$Primo(x):=\forall z,(Uno(z) \Rightarrow z|x ) \wedge \forall z, (\neg Uno(z)\wedge z\neq x \Rightarrow \neg z|x ) \wedge (x|x \wedge \neg Uno(x))$$
 Luego:
  $$primosGemelos(p,q) := \exists k, Dos(k) \land [Primo(p) \land Primo(q)] \land [p < q \land +(k,p,q)]$$
 
@@ -253,7 +234,7 @@ $$Racionales(p, q) := \neg Cero(q) \land \forall x([\;x|p \land x|q\;] \Rightarr
 1. Se espera que todas las listas sean de largo mayor > 0. En el caso de que la lista tenga 1 elemento solo tenemos una opción para elegir, si se tienen 2 elementos, como buscamos los elementos disjuntos, elegimos el mayor, si la lista tiene largo mayor a 2 seleccionamos la mayor suma entre la lista sin el ultimo elemento, la lista con el ultimo elemento y la lista que solo contiene al ultimo elemento:
 
 \begin{equation}
-    \label{eq:aqui-le-mostramos-como-hacerle-la-llave-grande}
+    \label{}
     F(n) = \left\{
           \begin{array}{ll}
             0 & \mathrm{si\ } n = 0 \\
@@ -264,7 +245,7 @@ $$Racionales(p, q) := \neg Cero(q) \land \forall x([\;x|p \land x|q\;] \Rightarr
 \end{equation}
 
 \begin{proof}
-	Para probar la correctitud se procedera por el principio de inducción:
+	Para probar la correctitud se procederá por el principio de inducción:
 
 	\fbox{Caso Base:}
 
@@ -273,7 +254,7 @@ $$Racionales(p, q) := \neg Cero(q) \land \forall x([\;x|p \land x|q\;] \Rightarr
     En el caso de que se entregue una lista vacía, la máxima satisfacción posible es 0, por lo que $F(0)$ debe devolver 0.
 
 	$n=1$
-    $$F(1) = max(a_1, 0)$$
+    $$F(1) = \max(a_1, 0)$$
     Como la lista solo contiene un valor solo existen 2 sublistas posibles, la lista $[a_n]$ o la lista vacía. Si la lista $[a_n]$ es mayor o igual a 0 entonces se retorna su único valor, en caso contrario se entrega el vacío, en ambos casos se obtiene la sublista con la máxima satisfacción.
 
 	\fbox{Caso Inductivo:}
