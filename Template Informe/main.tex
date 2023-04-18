@@ -263,7 +263,7 @@ $$Racionales(p, q) := \neg Cero(q) \land \forall x([\;x|p \land x|q\;] \Rightarr
     
     $\Rightarrow$ Debemos mostrar que el algoritmo calcula correctamente $F(n+1)$. Cuando el algoritmo calcula $F(n+1)$, este establece que:
 
-    $$F(n+1) = \max(F(n), F(n-1) + a_{n+1}\;,a_{n+1})$$
+    $$F(n+1) = \max(F(n), F(n-1) + a_{n+1})$$
 
     Si se tiene una lista de largo n $[a_1,...,a_n]$ y le agregamos un elemento $a_{n+1}$, tenemos que F(n) y F(n-1) existen y nos devuelven los respectivos máximos, si queremos agregar a $a_{n+1}$ a las opciones tendremos que sumárselo a F(n-1), de esta forma nos aseguramos que la sublista que se genera solo contiene elementos no adyacentes. En el caso de que agregar el elemento $a_{n+1}$ y quedarnos con la máxima sublista en el conjunto $[a_1,...,a_{n-1}]$ no nos entregue la máxima suma también se tiene la opción de que la máxima suma sea F(n). Al buscar el máximo entre F(n) y F(n-1)+$a_{n+1}$ nos aseguramos que obtendremos la máxima satisfacción posible de todas las sublistas y que ninguna sublista contiene elementos adyacentes a otros en la lista original.
     

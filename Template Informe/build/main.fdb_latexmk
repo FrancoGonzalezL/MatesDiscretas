@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1681788966 "c:/Users/Martin/OneDrive - Universidad de Chile/Universidad/5º Semestre/Matemáticas Discretas/Tareas/Tarea 1/Template Informe/main.tex" "build/main.pdf" "main" 1681788976 0
+["pdflatex"] 1681789558 "c:/Users/Martin/OneDrive - Universidad de Chile/Universidad/5º Semestre/Matemáticas Discretas/Tareas/Tarea 1/Template Informe/main.tex" "build/main.pdf" "main" 1681789571 0
   "C:/Users/Martin/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1681751215 81088 29d6fa367ac022d1b69251d68c0742e6 ""
   "C:/Users/Martin/AppData/Local/MiKTeX/fonts/tfm/public/rsfs/rsfs10.tfm" 1678890675 688 37338d6ab346c2f1466b29e195316aa4 ""
   "C:/Users/Martin/AppData/Local/MiKTeX/fonts/tfm/public/rsfs/rsfs5.tfm" 1678890677 684 3a51bd4fd9600428d5264cf25f04bb9a ""
@@ -269,10 +269,10 @@
   "C:/Users/Martin/AppData/Local/Programs/MiKTeX/tex/latex/xurl/xurl.sty" 1641730340 4675 e4b8c405820368c2dfb03526e16d725a ""
   "C:/Users/Martin/AppData/Local/Programs/MiKTeX/tex/latex/zref/zref-abspage.sty" 1650051284 2245 c8a4088d07cffc2e5207730c738edd76 ""
   "C:/Users/Martin/AppData/Local/Programs/MiKTeX/tex/latex/zref/zref-base.sty" 1650051284 20785 71a3d72ab517959a6979c27e6176bec1 ""
-  "build/main.aux" 1681788975 1120 a695d0f3f84b533f5f268b02072c705e "pdflatex"
-  "c:/Users/Martin/OneDrive - Universidad de Chile/Universidad/5º Semestre/Matemáticas Discretas/Tareas/Tarea 1/Template Informe/main.tex" 1681788948 14094 48399e09b1a5fba9de8056b8352a4611 ""
+  "build/main.aux" 1681789570 1120 a695d0f3f84b533f5f268b02072c705e "pdflatex"
+  "c:/Users/Martin/OneDrive - Universidad de Chile/Universidad/5º Semestre/Matemáticas Discretas/Tareas/Tarea 1/Template Informe/main.tex" 1681789556 14084 12f403f35076588b2201b631af1ea1b9 ""
   "img/departamentos/dcc.pdf" 1681751082 28068 5cb44825b605ae06a1bfb763ef13ab7e ""
-  "main.tex" 1681788948 14094 48399e09b1a5fba9de8056b8352a4611 ""
+  "main.tex" 1681789556 14084 12f403f35076588b2201b631af1ea1b9 ""
   "template.tex" 1681751081 385238 c619fec583652e0c694b2e66f01e1202 ""
   "template_config.tex" 1681751081 22295 1089604735077b053c395e4c488bf616 ""
   (generated)
