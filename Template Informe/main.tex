@@ -16,7 +16,7 @@
 ]{article}
 
 % INFORMACIÓN DEL DOCUMENTO
-\def\documenttitle {Martín E. Bravo y Franco González}
+\def\documenttitle {Martín E. Bravo, Franco González y Felipe Avendaño A.} 
 \def\documentsubtitle {}
 \def\documentsubject {Tema a tratar}
 
@@ -91,15 +91,15 @@ def esTautologia(p):
 Probaremos si el algoritmo anterior es correcto:
 \begin{proof}
 
-    PDQ: $\neg \phi$ es insatisfacible $\Rightarrow \phi$ es tautología
+    PDQ: $\neg \phi$ es insatisfacible $\Leftrightarrow \phi$ es tautología
     
-    $\neg \phi$ es insatisfacible $\Rightarrow (\emptyset \cup \{\neg \phi\})$ es insatisfacible
+    $\neg \phi$ es insatisfacible $\Leftrightarrow (\emptyset \cup \{\neg \phi\})$ es insatisfacible
     
-    $\hspace{34mm} \Rightarrow \emptyset \models \phi$
+    $\hspace{33mm} \Leftrightarrow \emptyset \models \phi$
 
-    $\hspace{34mm} \Rightarrow \sigma(\phi) = 1$
+    $\hspace{33mm} \Leftrightarrow \sigma(\phi) = 1$
 
-    $\hspace{34mm} \Rightarrow \phi$ es Tautología
+    $\hspace{33mm} \Leftrightarrow \phi$ es Tautología
 \end{proof}
 
 b) Se tienen 2 fórmulas proposicionales $\phi$ y $\varphi$, se va a determinar si tienen los mismos valores de verdad. Algoritmo que utiliza $A$ para responder a esta pregunta:
@@ -115,17 +115,17 @@ def equivalentes(p, q):
 Probaremos si el algoritmo anterior es correcto:
 
 \begin{proof}
-    PDQ: $\neg ((\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi))$ es insatisfacible $\Rightarrow \phi \equiv \varphi$
+    PDQ: $\neg ((\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi))$ es insatisfacible $\Leftrightarrow \phi \equiv \varphi$
 
-    $\neg ((\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi))$ es insatisfacible $\Rightarrow (\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi)$ es Tautología
+    $\neg ((\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi))$ es insatisfacible $\Leftrightarrow (\neg \phi \vee \varphi)\land(\phi \vee \neg \varphi)$ es Tautología
 
-    $\hspace{67mm} \Rightarrow (\phi \Rightarrow \varphi) \land (\varphi \Rightarrow \phi)$ es Tautología
+    $\hspace{67mm} \Leftrightarrow (\phi \Rightarrow \varphi) \land (\varphi \Rightarrow \phi)$ es Tautología
 
-    $\hspace{67mm} \Rightarrow (\phi \Leftrightarrow \varphi)$ es Tautología
+    $\hspace{67mm} \Leftrightarrow (\phi \Leftrightarrow \varphi)$ es Tautología
 
-    $\hspace{67mm} \Rightarrow \sigma(\phi) = \sigma(\varphi)$
+    $\hspace{67mm} \Leftrightarrow \sigma(\phi) = \sigma(\varphi)$
 
-    $\hspace{67mm} \Rightarrow \phi \equiv \varphi$
+    $\hspace{67mm} \Leftrightarrow \phi \equiv \varphi$
     
 \end{proof}
 
@@ -299,7 +299,7 @@ $$Racionales(p, q) := \neg Cero(q) \land \forall x([\;x|p \land x|q\;] \Rightarr
         else if n == 1:
             return max(a[0],0)
         else:
-            return max(F(n - 1), F(n - 2) + a[n-1], a[n-1])
+            return max(F(n - 1), F(n - 2) + a[n-1])
 \end{lstlisting}
 
 La complejidad de este algoritmo es $\Theta(2^n)$, como en cada llamada se vuelve a llamar otras 2 veces entonces por cada llamada duplica el tamaño del problema.\\
@@ -312,7 +312,7 @@ La complejidad de este algoritmo es $\Theta(2^n)$, como en cada llamada se vuelv
         Fn_1 = 0
         Fn_2 = 0
         for i in range(n):
-            ( Fn_1, Fn_2 ) = ( max(Fn_1, Fn_2+lista[i], lista[i]),  Fn_1 )
+            ( Fn_1, Fn_2 ) = ( max(Fn_1, Fn_2+lista[i]),  Fn_1 )
 
         return Fn_1
 
