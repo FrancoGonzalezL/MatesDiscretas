@@ -5,35 +5,51 @@ using namespace std;
 //32 == " "
 //61 == "="
 vector<vector<int>> CFG;
+vector<string> Bloques;
 vector<string> texto;
 set<int> variables_definidas;
 
-int buscar_variable_definida(string line){//solo una idea
-    //permite saber si hay una variable sin importar identacion
-    for(auto caracter: line){
-        if(caracter == 32){
-            continue;
-        }else if (96 < caracter && caracter < 123){
-            return caracter;
-        }else{
-            return 0;
-        }
+int contar_ident(string line){
+    int contador = 0;
+    auto itr = line.begin();
+    while(*itr==32){
+        contador++;
+        itr++;
     }
-    return 0;
+    return contador;
 }
 
-int tipo_de_expresion(string line){
-    for(auto caracter: line){
-        if      (caracter == 32 ){continue;// == " "
-        }else if(96 < caracter && caracter < 123){
-            variables_definidas.insert(caracter); 
-            return 1;
-        }
-        else if(false){}
-    }
-    return 0;
-
+bool es_funcion(string line, int i){
+    //de momento que funcione solo con print() o con f(x,...,z)
+    return false;
 }
+bool es_def(string line, int i){
+
+    return false;
+}
+
+bool es_instruccion(string line){
+    //puede ser una funcion simplemente
+    //o una definicion de variable
+    for(int i=0;i<line.size();i++){
+        if(line[i]==32)continue;
+
+        if (es_funcion(line, i)){ 
+            return true;
+        }else if(es_def(line, i)){
+            return true; 
+        }else{return false;}
+    } 
+}
+
+bool es_if(string line){
+    return false;
+}
+bool es_while(string line){
+    return false;
+}
+
+
 
 int main(){
     //abrir el archivo
@@ -45,13 +61,23 @@ int main(){
 
     string line;
     while(getline(inputFile,line)){
-        //aqui va alguna funcion para analizar la linea
+        int ident = 0;  
+        string bloque;
 
-        for(int caracter: line){
-            cout<<(char) caracter;
+        if(ident!=contar_ident(line)){
+            Bloques.push_back(bloque); //cerramos bloque anterior
+            bloque = "";               //reiniciamos bloque actual
+            ident = contar_ident(line);//nueva identacion
         }
-        cout<<endl;
-        texto.push_back(line);//solo por si es necesario, se puede guardar como un vector
+
+        if(es_instruccion(line)){
+            continue;
+        }else if(es_if(line)){
+            continue;
+        }else if(es_while(line)){
+            continue;
+        }
+
         }
     inputFile.close();//inputFile.open() si se quiere reabrir
 
