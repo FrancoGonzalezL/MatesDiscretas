@@ -5,7 +5,13 @@ using namespace std;
 //32 == " "
 //61 == "="
 vector<vector<int>> CFG;
+
+//util para separar en bloques
 vector<string> Bloques;
+
+//util para armar el CFG
+vector<string> lineas; 
+vector<int>    nodo_linea;
 
 bool is_alpha(int a){
     return (96<a && a<123);
@@ -85,118 +91,238 @@ bool es_while(string line){
     }
     return s[s.size()-1]==58;
 }
-bool exis_else(string name, int i, int ident_){
-    ifstream ar(name);
+bool exis_else(int linea){
     string line;
-    int c = 0;
-    while(getline(ar,line)){
-        if(c<=i){c++;continue;}//avanzamos a la linea que leimos
-        if(contar_ident(line)==ident_){
-            if(es_if(line))return false;       
-            if(es_else(line))return true;}
+    for(int i=linea+1;i<lineas.size()-1;i++){
+        line = lineas[i];
+        if(contar_ident(line)==contar_ident(lineas[linea])){
+            if(es_if(line)) return false;      
+            if(es_else(line))return true;
+        }
     }
     return false;
 }
+int ult_linea(int bloque){
+    //retorna index de la ultima linea contenida en el bloque
+    int indx = -1;
+    for(int i=0; i<lineas.size(); i++){
+        if(bloque == nodo_linea[i])indx = i;
+    }
+    return indx;
+}
+bool esta_conectado(int i, int n){
+    int c = 0;
+    for(int j=0;j<CFG.size();j++){
+        if(CFG[i][j]==1)c++;
+        if(c==n)return true;
+    }
+    return false;
+}
+int encontrar_siguiente_simple(int i){
+    for(int j=i+1;j<lineas.size();j++){
+        string line = lineas[j];
+        if(contar_ident(line)<=contar_ident(lineas[i]) && !es_else(line)){//cualquier caso posible
+            return j;
+        }
+    }
+    return lineas.size()-1;//si llegamos a "Fin"
+}
+int encontrar_siguiente_else(int i){
+    for(int j=i+1; j<lineas.size()-1; j++){
+        string line = lineas[j];
+        if(contar_ident(line)==contar_ident(lineas[i]) && es_else(line)){
+            return j+1;//retorna el indice del bloque siguiente al else
+        }
+    }
+    return -1;
+}
+int ultimo_con_igual_ident(int i){
+    int k = i;
+    for(int j=i;j<lineas.size()-1;j++){
+        string line = lineas[j];
+        if(contar_ident(line)==contar_ident(lineas[i]) && !es_else(line)) k = j;
+        if(contar_ident(line)<contar_ident(lineas[i]))break;
+    }
+    return k;
+}
+void conectar_hijos(int a, int b, int c){
+    // a = linea con primer hijo if
+    // b = linea con primer hijo else
+    // c = linea con la que quiero conectar
+    // para el hijo del if buscamos el ultimo y lo conectamos a c
+    int k = ultimo_con_igual_ident(a);
+    if(es_def(lineas[k])||es_func(lineas[k])){
+        CFG[nodo_linea[k]][nodo_linea[c]] = 1;
+    }else if(es_if(lineas[k])){
+        CFG[nodo_linea[k]][nodo_linea[k]+1] = 1;//se conecta con el hijo del if
+        if(!exis_else(k)){
+            CFG[nodo_linea[k]][nodo_linea[c]] = 1;//conectar nodo con el nodo deseado
+            conectar_hijos(ult_linea(nodo_linea[k]+1),-1,c);
+        }else{
+            CFG[nodo_linea[k]][nodo_linea[encontrar_siguiente_else(k)]] = 1;//conectar con el hijo de else
+            conectar_hijos(ult_linea(nodo_linea[k]+1),encontrar_siguiente_else(k),c);
+        }
+    }else if(es_while(lineas[k])){
+        CFG[nodo_linea[k]][nodo_linea[c]] = 1;
+        CFG[nodo_linea[k]][nodo_linea[k]+1] = 1;
+        conectar_hijos(ult_linea(nodo_linea[k]+1),-1,k);
+    }
+
+    //lo mismo para el hijo del else
+    if (b == -1) return;
+    k = ultimo_con_igual_ident(b);
+    if(es_def(lineas[k])||es_func(lineas[k])){
+        CFG[nodo_linea[k]][nodo_linea[c]] = 1;
+    }else if(es_if(lineas[k])){
+        CFG[nodo_linea[k]][nodo_linea[k]+1] = 1;//se conecta con el hijo del if
+        if(!exis_else(k)){
+            CFG[nodo_linea[k]][nodo_linea[c]] = 1;//conectar nodo con el nodo deseado
+            conectar_hijos(ult_linea(nodo_linea[k]+1),-1,c);
+        }else{
+            CFG[nodo_linea[k]][nodo_linea[encontrar_siguiente_else(k)]] = 1;//conectar con el hijo de else
+            conectar_hijos(ult_linea(nodo_linea[k]+1),encontrar_siguiente_else(k),c);
+        }
+    }else if(es_while(lineas[k])){
+        CFG[nodo_linea[k]][nodo_linea[c]] = 1;
+        CFG[nodo_linea[k]][nodo_linea[k]+1] = 1;
+        conectar_hijos(ult_linea(nodo_linea[k]+1),-1,k);
+    }
+}
+//---------------------------------------------------------------------
 int main(){
-    //abrir el archivo
     string nombre; cin>>nombre;
     ifstream inputFile(nombre);
     if(!inputFile){
         cout<<"ERROR: archivo no encontrado";
         return 1;}
-
     string line;
     string bloque;
     int ident = 0;  
     int i = 0;
-    int j = 0;
-
-    vector<vector<int>> nodos;
-    vector<int> nodo;
-    vector<int> nodo_if;
-
-    stack<tuple<int,int,bool>> info_if;
-    stack<pair<int,int>> info_while;
-
     while(getline(inputFile,line)){
+        //para terminar bloques si se reduce identacion
         if(ident>contar_ident(line) && !es_else(line)){
-            i++;//nuevo bloque
-            while(!info_if.empty()){
-                auto [k,ident_,e_else] = info_if.top();
-                if(ident_<contar_ident(line)) break;
-                if(e_else){
-                    nodo_if.push_back(i);
-                    nodos.push_back(nodo_if);
-                    nodo_if.clear();
-                }
-                nodos[k].push_back(i);
-                info_if.pop();
-            }
-            while(!info_while.empty()){
-                auto [indice, ident_] = info_while.top();
-                if(ident_<contar_ident(line))break;
-                nodo.push_back(indice);
-                info_while.pop();
-            }
-            nodo.push_back(i);
-            nodos.push_back(nodo);
-            nodo.clear();
-
+            i++;
             Bloques.push_back(bloque);
             bloque = "";
-            }
-
-        ident = contar_ident(line);
+        }
+        ident = contar_ident(line);//se actualiza identacion
 
         if(es_if(line)){
-            nodo.push_back(i+1);
-            nodos.push_back(nodo);
-            info_if.push({i,contar_ident(line),exis_else(nombre,j,contar_ident(line))});
-            nodo.clear();
+            lineas.push_back(line);
+            nodo_linea.push_back(i);
             i++;
 
             bloque+=cortar_ident(line)+"\n";
             Bloques.push_back(bloque);
             bloque = "";
-
         }else if(es_while(line)){
-            nodo.push_back(i+1);
-            nodos.push_back(nodo);
-            nodo.clear();
+            lineas.push_back(line);
+            if(bloque.size()>0){
+                Bloques.push_back(bloque);
+                i++;}
+            nodo_linea.push_back(i);
             i++;
-            nodo.push_back(i+1);
-            nodos.push_back(nodo);
-            nodo.clear();
-            i++;
-
-            Bloques.push_back(bloque);
             Bloques.push_back(cortar_ident(line+"\n"));
             bloque = "";
-
-            info_while.push({i-1,contar_ident(line)});
-
         }else if(es_else(line)){
+            nodo_linea.push_back(-1);
             i++;
-            nodo_if = nodo;
-            nodo.clear();
+            lineas.push_back(line);
             Bloques.push_back(bloque);
             bloque = "";
         }else if(es_def(line)||es_func(line)){
+            nodo_linea.push_back(i);
+            lineas.push_back(line);
             bloque+=cortar_ident(line)+"\n";
         }
-    j++;
+    }
+    Bloques.push_back(bloque);
+    i++;
+
+    lineas.push_back("Fin");
+    Bloques.push_back("Fin");
+    nodo_linea.push_back(i);
+
+    CFG.assign(Bloques.size(),vector<int>(Bloques.size(),0));//Matriz de adyacencia
+    for(int i=0;i<Bloques.size()-1;i++){//menos Fin (no conecta con nada)
+        //buscaremos que tipo de bloque es, con que se conecta, etc..
+        //primero buscamos el indice del bloque
+        //buscamos el indice en los nodos
+        //buscamos las lineas contenidas
+        //revisamos la info de las lineas
+
+        //conviene tener una funcion que encuentre el siguiente
+        // puede ser que con el indice i buscamos la ultima linea con el indice i
+        // identificamos el bloque actual
+        // identificamos si pertenece a algun while
+        // caso contrario el siguiente debe ser siguiente bloque
+
+        //los bloques que terminan en instrucciones simples o definiciones siempre conectan solo con 1
+
+
+        int j = ult_linea(i);
+        string linea = lineas[j]; 
+        if (es_while(linea) && !esta_conectado(i,2)){
+            CFG[i][i+1] = 1;
+        //si leemos un while
+        // --> conectamos el while con el siguiente y con el siguiente fuera del while (funcion encontrar siguiente no contenido y siguiente simple)
+            int nodo_ = encontrar_siguiente_simple(j);
+            CFG[i][nodo_linea[nodo_]] = 1;
+        // --> conectamos el ultimo bloque contenido en el while con el mismo
+        //     el ultimo debe tener igual identacion que el primer bloque despues del while
+        //     si es una instruccion o un while la conectamos simplemente
+        //     si es un if, conectamos sus nodos finales con el while 
+        //          --> si es un if simple conectar la ultima instruccion del if con el while
+        //          --> si es un if_else conectar las 2 ultimas instrucciones con el while
+            conectar_hijos(ult_linea(i+1),-1,j);
+        }else if(es_if(linea) && !esta_conectado(i,2) ){ 
+        //si el bloque termina con una condicion if
+        // sin else:
+        // --> conectar el bloque del if con el siguiente y con el siguiente que tenga igual o menor identacion
+        // con else:
+        // --> conectar el bloque con el siguiente y el siguiente despues del else
+        // --> la ultima instruccion contenida en el if debe estar conectada con lo mismo que se conecta la instruccion final del else
+            CFG[i][i+1] = 1;
+            if(!exis_else(j)){//si no existe un else para el if
+                int nodo_ = encontrar_siguiente_simple(j);
+                CFG[i][nodo_linea[nodo_]] = 1;
+                conectar_hijos(ult_linea(i+1),-1, nodo_);
+            }else{
+                int nodo_ = encontrar_siguiente_else(j);
+                CFG[i][nodo_linea[nodo_]] = 1;
+                conectar_hijos(ult_linea(i+1),ult_linea(nodo_linea[nodo_]),encontrar_siguiente_simple(j));
+            }
+
+        }else if((es_def(linea)||es_func(linea)) && !esta_conectado(i,1)){
+        // si es una instruccion simple
+        // --> conectar con el siguiente (a no ser que ya este conectado)
+        //si el bloque actual termina con igual identacion con la que comienza el bloque siguiente entonces conectar directo
+        // --> debe se alguna condicion if o while
+            CFG[i][i+1] = 1;
+        }
     }
 
-    Bloques.push_back(bloque);i++;
+
     for(int i=0;i<Bloques.size();i++){
-        cout<<"bloque "<<i<<":"<<endl;
+        cout<<"bloque "<<i+1<<":"<<endl;
         cout<<Bloques[i]<<endl;
     }
+
+    cout<<endl<<"Matriz de adyacencia:"<<endl;
+    cout<<"   ";
+    for(int i=0;i<CFG.size();i++){
+        cout<<i+1<<" ";
+        if(i<9){cout<<" ";}
+    }
     cout<<endl;
-    for(int i=0;i<nodos.size();i++){
-        cout<<i<<": ";
-        for(int x: nodos[i]){
-            cout<<x<<" ";
+
+    for(int i=0;i<CFG.size();i++){
+        cout<<i+1<<" ";
+        if(i<9){cout<<" ";}
+
+        for(int j=0;j<CFG.size();j++){
+            cout<<CFG[i][j]<<"  ";
         }
         cout<<endl;
     }

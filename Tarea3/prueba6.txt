@@ -2,5 +2,12 @@ x = 0
 if es_especial(x):
     x = 5
 else:
+    if x == 1:
+        print("hola")
+        while x == 2:
+            if a == b:
+                print(a) 
+            else:
+                print(b)
     y = 5
 print(x + y)

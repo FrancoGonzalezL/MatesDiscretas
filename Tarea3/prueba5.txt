@@ -5,4 +5,3 @@ while x < 10:
     else:
         print('x es menor que 6')
     x = x + 1
-    
