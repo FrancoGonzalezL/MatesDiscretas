@@ -113,17 +113,30 @@ int main(){
 
     vector<vector<int>> nodos;
     vector<int> nodo;
-    stack<int> nodo_while;
-    stack<tuple<int,int,bool>> nodo_if;
+    vector<int> nodo_if;
+
+    stack<tuple<int,int,bool>> info_if;
+    stack<pair<int,int>> info_while;
 
     while(getline(inputFile,line)){
-        if(ident>contar_ident(line)){
+        if(ident>contar_ident(line) && !es_else(line)){
             i++;//nuevo bloque
-            while(!nodo_if.empty()){
-                auto [k,ident_,e_else] = nodo_if.top();
-                if(ident_<contar_ident(line)||e_else) break;
+            while(!info_if.empty()){
+                auto [k,ident_,e_else] = info_if.top();
+                if(ident_<contar_ident(line)) break;
+                if(e_else){
+                    nodo_if.push_back(i);
+                    nodos.push_back(nodo_if);
+                    nodo_if.clear();
+                }
                 nodos[k].push_back(i);
-                nodo_if.pop();
+                info_if.pop();
+            }
+            while(!info_while.empty()){
+                auto [indice, ident_] = info_while.top();
+                if(ident_<contar_ident(line))break;
+                nodo.push_back(indice);
+                info_while.pop();
             }
             nodo.push_back(i);
             nodos.push_back(nodo);
@@ -138,7 +151,7 @@ int main(){
         if(es_if(line)){
             nodo.push_back(i+1);
             nodos.push_back(nodo);
-            nodo_if.push({i,contar_ident(line),exis_else(nombre,j,contar_ident(line))});
+            info_if.push({i,contar_ident(line),exis_else(nombre,j,contar_ident(line))});
             nodo.clear();
             i++;
 
@@ -160,12 +173,14 @@ int main(){
             Bloques.push_back(cortar_ident(line+"\n"));
             bloque = "";
 
+            info_while.push({i-1,contar_ident(line)});
+
         }else if(es_else(line)){
-            auto [a,b,c] = nodo_if.top();
-            if(b==contar_ident(line) and c){
-                nodos[a].push_back(i);
-                nodo_if.pop();
-            }
+            i++;
+            nodo_if = nodo;
+            nodo.clear();
+            Bloques.push_back(bloque);
+            bloque = "";
         }else if(es_def(line)||es_func(line)){
             bloque+=cortar_ident(line)+"\n";
         }
