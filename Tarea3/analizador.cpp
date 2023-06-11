@@ -30,6 +30,7 @@ string cortar_ident(string line){
 }
 int contar_ident(string line){
     int contador = 0;
+    if(line.size()==0) return 0;
     auto itr = line.begin();
     while(*itr==32){
         contador++;
@@ -201,7 +202,7 @@ int main(){
     int i = 0;
     while(getline(inputFile,line)){
         //para terminar bloques si se reduce identacion
-        if(ident>contar_ident(line) && !es_else(line)){
+        if(contar_ident(line)<ident && !es_else(line) && bloque.size()>0){
             i++;
             Bloques.push_back(bloque);
             bloque = "";
@@ -237,12 +238,18 @@ int main(){
             bloque+=cortar_ident(line)+"\n";
         }
     }
-    Bloques.push_back(bloque);
-    i++;
-
+    if(bloque.size()>0){
+        Bloques.push_back(bloque);
+        i++;
+    }
     lineas.push_back("Fin");
     Bloques.push_back("Fin");
     nodo_linea.push_back(i);
+
+    for(int i=0;i<Bloques.size();i++){
+        cout<<"bloque "<<i+1<<":"<<endl;
+        cout<<Bloques[i]<<endl;
+    }
 
     CFG.assign(Bloques.size(),vector<int>(Bloques.size(),0));//Matriz de adyacencia
     for(int i=0;i<Bloques.size()-1;i++){//menos Fin (no conecta con nada)
@@ -304,10 +311,6 @@ int main(){
     }
 
 
-    for(int i=0;i<Bloques.size();i++){
-        cout<<"bloque "<<i+1<<":"<<endl;
-        cout<<Bloques[i]<<endl;
-    }
 
     cout<<endl<<"Matriz de adyacencia:"<<endl;
     cout<<"   ";

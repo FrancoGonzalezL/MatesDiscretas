@@ -1,4 +1,14 @@
-x = 1
-while a == b:
-    print(x)
-a = 2
+if a == 1:
+    while b==1:
+        while c==1:
+            while d==1:
+                while e==1:
+                    while f==1:
+                        while d==1:
+                            e=f(e)
+                        if z ==1:
+                            a = b
+                        else:
+                            c = c
+                        
+                    
