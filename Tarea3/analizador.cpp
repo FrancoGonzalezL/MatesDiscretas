@@ -191,22 +191,99 @@ void conectar_hijos(int a, int b, int c){
     }
 }
 //---------------------------------------------------------------------
+string ifwhile_true(string line, bool t_f=false, bool true_=false){//funcion solo para dejar string en el formato pedido
+    string nueva_linea;
+    if(es_while(line)){
+        for(int i=6;i<line.size()-1;i++){
+            nueva_linea += line[i];
+        }         
+    }else if(es_if(line)){
+        for(int i=3;i<line.size()-1;i++){
+            nueva_linea += line[i];
+        }
+    }
+    if(t_f){
+        if(true_){nueva_linea += " == True";}
+        else     {nueva_linea += " == False";}
+    }
+    return nueva_linea;
+}
 int variables_def(string line){
     for(int x:line){
-        if(isalpha(x)){return x;}
+        if(isalpha(x)){return x;}//la primera letra que leemos: x =...
     }
+    return 0;
 }
 vector<int> variable_utl(string line){
-    if(es_def(line)){
-        //leer variables a la der del =
-    }else if(es_func(line)){
-        //leer variables entre los parentesis ()
+    vector<int> variables;
+    auto itr = line.begin();
+    if(es_if(line)||es_while(line)){
+        line = ifwhile_true(line);
+        itr = line.begin();
+        //leemos todas las variables de la condicion
+        if(es_func(line))return variable_utl(line);
+        while(itr!=line.end()){
+            if(is_alpha(*itr)) variables.push_back(*itr);
+            itr++;
+        }
+    }else if(es_func(line)){//se define una variable con una funcion
+        while(*itr!=40)itr++;
+        while(itr!=line.end()){
+            if(is_alpha(*itr)) variables.push_back(*itr);
+            itr++;
+        }
+
+    }else if(es_def(line)){//definicion normal
+        while(*itr!=61)itr++;//avanzar hasta llegar al igual
+        while(itr!=line.end()){
+            if(is_alpha(*itr)) variables.push_back(*itr);
+            itr++;
+        }
+    }
+    return variables;
+}
+void variable_ind_encontrada(char a, vector<string> camino){
+    cout<<endl<<"Variable: "<< a <<endl<<"Camino: ";
+    for(int i=0;i<camino.size();i++){
+        cout<< camino[i];
+        if(i<camino.size()-1)cout<<", ";
     }
 }
-void variables_indefinidas(){
-
-
-    return;
+void variables_indefinidas(int bloque_, vector<vector<int>> aristas_ocupadas, set<int> variables_, vector<string> camino){
+    if(bloque_==CFG.size()-1) return; //linea == "Fin"
+    string line;
+    vector<int> var_;
+    int var;
+    for(int i=0; i<nodo_linea.size(); i++){
+        if(nodo_linea[i]==bloque_){//pertenece al bloque 
+            line = cortar_ident(lineas[i]);
+            camino.push_back(line);//se agrega al camino nodo que estamos leyendo
+            var_ = variable_utl(line);//variables utilizadas
+            for(int a: var_){
+                if(variables_.find(a)==variables_.end()){//si alguan variable no fue definida antes
+                    variable_ind_encontrada((char) a, camino);//
+                }
+            }
+            if(es_def(line)){//si es que se define una variable
+                var = variables_def(line);
+                variables_.insert(var);//agregamos la variable que definimos
+            }
+        }
+    }
+    //seguimos por los posibles caminos
+    for(int j=0; j<CFG.size(); j++){
+        if(CFG[bloque_][j] && !aristas_ocupadas[bloque_][j]){
+            aristas_ocupadas[bloque_][j] = 1;
+            bool t_f = !(j - bloque_ - 1); 
+            string c = camino[camino.size()-1];
+            if(es_if(camino[camino.size()-1])||es_while(camino[camino.size()-1])){
+                //si es una condicion y no sigue su camino directo 
+                camino[camino.size()-1] = ifwhile_true(camino[camino.size()-1], true, t_f);
+            }
+            variables_indefinidas(j, aristas_ocupadas, variables_, camino);
+            camino[camino.size()-1] = c;
+        }
+    }
 }
 //---------------------------------------------------------------------
 int main(){
@@ -348,6 +425,12 @@ int main(){
         }
         cout<<endl;
     }
+
+    vector<vector<int>> a_o(CFG.size(),vector<int>(CFG.size()));
+    set<int> v_d;
+    vector<string> c;
+    cout<<"Variables Indefinidas";
+    variables_indefinidas(0, a_o, v_d, c);
 
     inputFile.close();//inputFile.open() si se quiere reabrir
     return 0;
