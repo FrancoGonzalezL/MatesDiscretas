@@ -17,6 +17,7 @@ bool is_alpha(int a){
     return (96<a && a<123);
 }
 string cortar_ident(string line){
+    if(line.size()==0)return line;
     string s;
     auto itr = line.begin();
     while(*itr==32){
@@ -29,8 +30,8 @@ string cortar_ident(string line){
     return s;
 }
 int contar_ident(string line){
-    int contador = 0;
     if(line.size()==0) return 0;
+    int contador = 0;
     auto itr = line.begin();
     while(*itr==32){
         contador++;
@@ -188,6 +189,24 @@ void conectar_hijos(int a, int b, int c){
         CFG[nodo_linea[k]][nodo_linea[k]+1] = 1;
         conectar_hijos(ult_linea(nodo_linea[k]+1),-1,k);
     }
+}
+//---------------------------------------------------------------------
+int variables_def(string line){
+    for(int x:line){
+        if(isalpha(x)){return x;}
+    }
+}
+vector<int> variable_utl(string line){
+    if(es_def(line)){
+        //leer variables a la der del =
+    }else if(es_func(line)){
+        //leer variables entre los parentesis ()
+    }
+}
+void variables_indefinidas(){
+
+
+    return;
 }
 //---------------------------------------------------------------------
 int main(){
