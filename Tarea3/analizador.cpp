@@ -249,7 +249,7 @@ void variable_ind_encontrada(char a, vector<string> camino){
         if(i<camino.size()-1)cout<<", ";
     }
 }
-void variables_indefinidas(int bloque_, vector<vector<int>> aristas_ocupadas, set<int> variables_, vector<string> camino){
+void variables_indefinidas(int bloque_, vector<int> nodos_visitados, set<int> variables_, vector<string> camino){
     if(bloque_==CFG.size()-1) return; //linea == "Fin"
     string line;
     vector<int> var_;
@@ -261,7 +261,10 @@ void variables_indefinidas(int bloque_, vector<vector<int>> aristas_ocupadas, se
             var_ = variable_utl(line);//variables utilizadas
             for(int a: var_){
                 if(variables_.find(a)==variables_.end()){//si alguan variable no fue definida antes
+                    string c = camino[camino.size()-1];
+                    camino[camino.size()-1] = ifwhile_true(camino[camino.size()-1]);
                     variable_ind_encontrada((char) a, camino);//
+                    camino[camino.size()-1] = c;
                 }
             }
             if(es_def(line)){//si es que se define una variable
@@ -272,15 +275,15 @@ void variables_indefinidas(int bloque_, vector<vector<int>> aristas_ocupadas, se
     }
     //seguimos por los posibles caminos
     for(int j=0; j<CFG.size(); j++){
-        if(CFG[bloque_][j] && !aristas_ocupadas[bloque_][j]){
-            aristas_ocupadas[bloque_][j] = 1;
+        if(CFG[bloque_][j] && !nodos_visitados[j]){
+            nodos_visitados[j] = 1;
             bool t_f = !(j - bloque_ - 1); 
             string c = camino[camino.size()-1];
             if(es_if(camino[camino.size()-1])||es_while(camino[camino.size()-1])){
                 //si es una condicion y no sigue su camino directo 
                 camino[camino.size()-1] = ifwhile_true(camino[camino.size()-1], true, t_f);
             }
-            variables_indefinidas(j, aristas_ocupadas, variables_, camino);
+            variables_indefinidas(j, nodos_visitados, variables_, camino);
             camino[camino.size()-1] = c;
         }
     }
@@ -342,10 +345,6 @@ int main(){
     Bloques.push_back("Fin");
     nodo_linea.push_back(i);
 
-    for(int i=0;i<Bloques.size();i++){
-        cout<<"bloque "<<i+1<<":"<<endl;
-        cout<<Bloques[i]<<endl;
-    }
 
     CFG.assign(Bloques.size(),vector<int>(Bloques.size(),0));//Matriz de adyacencia
     for(int i=0;i<Bloques.size()-1;i++){//menos Fin (no conecta con nada)
@@ -408,6 +407,11 @@ int main(){
 
 
 
+    if(false){
+    for(int i=0;i<Bloques.size();i++){
+        cout<<"bloque "<<i+1<<":"<<endl;
+        cout<<Bloques[i]<<endl;
+    }
     cout<<endl<<"Matriz de adyacencia:"<<endl;
     cout<<"   ";
     for(int i=0;i<CFG.size();i++){
@@ -425,12 +429,22 @@ int main(){
         }
         cout<<endl;
     }
+    }
+    cout<<"CFG"<<endl;
+    cout<<"Nodos: "<<CFG.size()<<endl;
+    int arcos = 0;for(auto nodo:CFG){for(int arco:nodo)arcos+=arco;}
+    cout<<"Arcos: "<<arcos<<endl;
+    cout<<"Componentes conexos:" << "falta..."<<endl<<endl;
 
-    vector<vector<int>> a_o(CFG.size(),vector<int>(CFG.size()));
+    vector<int> a_o(CFG.size(),0);
     set<int> v_d;
     vector<string> c;
     cout<<"Variables Indefinidas";
     variables_indefinidas(0, a_o, v_d, c);
+    cout<<endl<<endl;
+
+    cout<<"Complejidad ciclomatica"<<endl;
+    cout<<"falta..."<<endl;
 
     inputFile.close();//inputFile.open() si se quiere reabrir
     return 0;
