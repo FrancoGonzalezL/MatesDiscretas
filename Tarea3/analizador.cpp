@@ -13,6 +13,8 @@ vector<string> Bloques;
 vector<string> lineas; 
 vector<int>    nodo_linea;
 
+vector< pair<int,vector<string>> > Variables_Indefinidas;
+
 bool is_alpha(int a){
     return (96<a && a<123);
 }
@@ -228,8 +230,10 @@ vector<int> variable_utl(string line){
         }
     }else if(es_func(line)){//se define una variable con una funcion
         while(*itr!=40)itr++;
+        bool str =false;
         while(itr!=line.end()){
-            if(is_alpha(*itr)) variables.push_back(*itr);
+            if(*itr==34||*itr==39)str=!str;
+            if(is_alpha(*itr)&&!str) variables.push_back(*itr);
             itr++;
         }
 
@@ -262,8 +266,11 @@ void variables_indefinidas(int bloque_, vector<int> nodos_visitados, set<int> va
             for(int a: var_){
                 if(variables_.find(a)==variables_.end()){//si alguan variable no fue definida antes
                     string c = camino[camino.size()-1];
-                    camino[camino.size()-1] = ifwhile_true(camino[camino.size()-1]);
-                    variable_ind_encontrada((char) a, camino);//
+                    if(es_if(camino[camino.size()-1])||es_while(camino[camino.size()-1])){
+                        camino[camino.size()-1] = ifwhile_true(camino[camino.size()-1]);
+                    }
+                    Variables_Indefinidas.push_back( {a,camino} );
+                    //variable_ind_encontrada((char) a, camino);//
                     camino[camino.size()-1] = c;
                 }
             }
@@ -441,6 +448,11 @@ int main(){
     vector<string> c;
     cout<<"Variables Indefinidas";
     variables_indefinidas(0, a_o, v_d, c);
+    sort(Variables_Indefinidas.begin(),Variables_Indefinidas.end());
+
+    for(auto [var,camino]: Variables_Indefinidas){
+        variable_ind_encontrada((char) var, camino);
+    }
     cout<<endl<<endl;
 
     cout<<"Complejidad ciclomatica"<<endl;
