@@ -434,7 +434,7 @@ int main(){
     cout<<"Nodos: "<<CFG.size()<<endl;
     int arcos = 0;for(auto nodo:CFG){for(int arco:nodo)arcos+=arco;}
     cout<<"Arcos: "<<arcos<<endl;
-    cout<<"Componentes conexos:" << "falta..."<<endl<<endl;
+    cout<<"Componentes conexos: " << "1"<<endl<<endl;
 
     vector<int> a_o(CFG.size(),0);
     set<int> v_d;
@@ -444,7 +444,7 @@ int main(){
     cout<<endl<<endl;
 
     cout<<"Complejidad ciclomatica"<<endl;
-    cout<<"falta..."<<endl;
+    cout<<arcos-CFG.size()+2<<endl;
 
     inputFile.close();//inputFile.open() si se quiere reabrir
     return 0;
