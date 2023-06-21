@@ -1,19 +1,8 @@
 a = 1
-b = 1
-c = 1
-d = 1
-e = 1
-if a == 1:
-    while b==1:
-        while c==1:
-            while d==1:
-                while e==1:
-                    while f==1:
-                        while d==1:
-                            e=f(e)
-                        if z ==1:
-                            a = b
-                        else:
-                            c = c
-                        
-                    
+
+if a > 5:
+    a = 2
+
+z = 1
+if b > 2:
+    b = 2

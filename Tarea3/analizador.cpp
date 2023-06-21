@@ -456,8 +456,33 @@ int main(){
     cout<<endl<<endl;
 
     cout<<"Complejidad ciclomatica"<<endl;
-    cout<<arcos-CFG.size()+2<<endl;
+    cout<<arcos - CFG.size() + 2<<endl;
 
+    if(false){//permite visualizar Bloques y CFG
+        cout<<endl<<"Bloques:"<<endl<<endl;
+        for(int i=0;i<Bloques.size();i++){
+            cout<<"Bloque "<<i+1<<":"<<endl;
+            cout<< Bloques[i] <<endl;
+        }
+        cout<<endl;
+        cout<<endl<<"Matriz de adyacencia:"<<endl;
+        cout<<"   ";
+        for(int i=0;i<CFG.size();i++){
+            cout<<i+1<<" ";
+            if(i<9){cout<<" ";}
+        }
+        cout<<endl;
+
+        for(int i=0;i<CFG.size();i++){
+            cout<<i+1<<" ";
+            if(i<9){cout<<" ";}
+
+            for(int j=0;j<CFG.size();j++){
+                cout<<CFG[i][j]<<"  ";
+            }
+            cout<<endl;
+        }
+    }
     inputFile.close();//inputFile.open() si se quiere reabrir
     return 0;
 }
