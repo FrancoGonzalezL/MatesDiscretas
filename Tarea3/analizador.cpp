@@ -18,7 +18,7 @@ vector< pair<int,vector<string>> > Variables_Indefinidas;
 bool is_alpha(int a){
     return (96<a && a<123);
 }
-string cortar_ident(string line){
+string cortar_indent(string line){
     if(line.size()==0)return line;
     string s;
     auto itr = line.begin();
@@ -31,7 +31,7 @@ string cortar_ident(string line){
     }
     return s;
 }
-int contar_ident(string line){
+int contar_indent(string line){
     if(line.size()==0) return 0;
     int contador = 0;
     auto itr = line.begin();
@@ -68,7 +68,7 @@ bool es_def(string line){
     return equal;
 }
 bool es_if(string line){
-    string s = cortar_ident(line);
+    string s = cortar_indent(line);
     if(s.size()>2){
         // se coprueba que:
         // if ... :
@@ -77,7 +77,7 @@ bool es_if(string line){
     return false;
 }
 bool es_else(string line){
-    string s = cortar_ident(line);
+    string s = cortar_indent(line);
     string e = "else";
     if(s.size()<5)return false;
     for(int i=0;i<4;i++){ 
@@ -86,7 +86,7 @@ bool es_else(string line){
     return s[s.size()-1]==58;
 }
 bool es_while(string line){
-    string s = cortar_ident(line);
+    string s = cortar_indent(line);
     string w = "while";
     if(s.size()<6)return false;
     for(int i=0;i<5;i++){
@@ -99,7 +99,7 @@ bool exis_else(int linea){
     string line;
     for(int i=linea+1;i<lineas.size()-1;i++){
         line = lineas[i];
-        if(contar_ident(line)==contar_ident(lineas[linea])){
+        if(contar_indent(line)==contar_indent(lineas[linea])){
             if(es_if(line)) return false;      
             if(es_else(line))return true;
         }
@@ -125,7 +125,7 @@ bool esta_conectado(int i, int n){
 int encontrar_siguiente_simple(int i){
     for(int j=i+1;j<lineas.size();j++){
         string line = lineas[j];
-        if(contar_ident(line)<=contar_ident(lineas[i]) && !es_else(line)){//cualquier caso posible
+        if(contar_indent(line)<=contar_indent(lineas[i]) && !es_else(line)){//cualquier caso posible
             return j;
         }
     }
@@ -134,18 +134,18 @@ int encontrar_siguiente_simple(int i){
 int encontrar_siguiente_else(int i){
     for(int j=i+1; j<lineas.size()-1; j++){
         string line = lineas[j];
-        if(contar_ident(line)==contar_ident(lineas[i]) && es_else(line)){
+        if(contar_indent(line)==contar_indent(lineas[i]) && es_else(line)){
             return j+1;//retorna el indice del bloque siguiente al else
         }
     }
     return -1;
 }
-int ultimo_con_igual_ident(int i){
+int ultimo_con_igual_indent(int i){
     int k = i;
     for(int j=i;j<lineas.size()-1;j++){
         string line = lineas[j];
-        if(contar_ident(line)==contar_ident(lineas[i]) && !es_else(line)) k = j;
-        if(contar_ident(line)<contar_ident(lineas[i]))break;
+        if(contar_indent(line)==contar_indent(lineas[i]) && !es_else(line)) k = j;
+        if(contar_indent(line)<contar_indent(lineas[i]))break;
     }
     return k;
 }
@@ -154,7 +154,7 @@ void conectar_hijos(int a, int b, int c){
     // b = linea con primer hijo else
     // c = linea con la que quiero conectar
     // para el hijo del if buscamos el ultimo y lo conectamos a c
-    int k = ultimo_con_igual_ident(a);
+    int k = ultimo_con_igual_indent(a);
     if(es_def(lineas[k])||es_func(lineas[k])){
         CFG[nodo_linea[k]][nodo_linea[c]] = 1;
     }else if(es_if(lineas[k])){
@@ -174,7 +174,7 @@ void conectar_hijos(int a, int b, int c){
 
     //lo mismo para el hijo del else
     if (b == -1) return;
-    k = ultimo_con_igual_ident(b);
+    k = ultimo_con_igual_indent(b);
     if(es_def(lineas[k])||es_func(lineas[k])){
         CFG[nodo_linea[k]][nodo_linea[c]] = 1;
     }else if(es_if(lineas[k])){
@@ -260,7 +260,7 @@ void variables_indefinidas(int bloque_, vector<int> nodos_visitados, set<int> va
     int var;
     for(int i=0; i<nodo_linea.size(); i++){
         if(nodo_linea[i]==bloque_){//pertenece al bloque 
-            line = cortar_ident(lineas[i]);
+            line = cortar_indent(lineas[i]);
             camino.push_back(line);//se agrega al camino nodo que estamos leyendo
             var_ = variable_utl(line);//variables utilizadas
             for(int a: var_){
@@ -304,23 +304,23 @@ int main(){
         return 1;}
     string line;
     string bloque;
-    int ident = 0;  
+    int indent = 0;  
     int i = 0;
     while(getline(inputFile,line)){
-        //para terminar bloques si se reduce identacion
-        if(contar_ident(line)<ident && !es_else(line) && bloque.size()>0){
+        //para terminar bloques si se reduce indentacion
+        if(contar_indent(line)<indent && !es_else(line) && bloque.size()>0){
             i++;
             Bloques.push_back(bloque);
             bloque = "";
         }
-        ident = contar_ident(line);//se actualiza identacion
+        indent = contar_indent(line);//se actualiza indentacion
 
         if(es_if(line)){
             lineas.push_back(line);
             nodo_linea.push_back(i);
             i++;
 
-            bloque+=cortar_ident(line)+"\n";
+            bloque+=cortar_indent(line)+"\n";
             Bloques.push_back(bloque);
             bloque = "";
         }else if(es_while(line)){
@@ -330,7 +330,7 @@ int main(){
                 i++;}
             nodo_linea.push_back(i);
             i++;
-            Bloques.push_back(cortar_ident(line+"\n"));
+            Bloques.push_back(cortar_indent(line+"\n"));
             bloque = "";
         }else if(es_else(line)){
             nodo_linea.push_back(-1);
@@ -341,7 +341,7 @@ int main(){
         }else if(es_def(line)||es_func(line)){
             nodo_linea.push_back(i);
             lineas.push_back(line);
-            bloque+=cortar_ident(line)+"\n";
+            bloque+=cortar_indent(line)+"\n";
         }
     }
     if(bloque.size()>0){
@@ -379,7 +379,7 @@ int main(){
             int nodo_ = encontrar_siguiente_simple(j);
             CFG[i][nodo_linea[nodo_]] = 1;
         // --> conectamos el ultimo bloque contenido en el while con el mismo
-        //     el ultimo debe tener igual identacion que el primer bloque despues del while
+        //     el ultimo debe tener igual indentacion que el primer bloque despues del while
         //     si es una instruccion o un while la conectamos simplemente
         //     si es un if, conectamos sus nodos finales con el while 
         //          --> si es un if simple conectar la ultima instruccion del if con el while
@@ -388,7 +388,7 @@ int main(){
         }else if(es_if(linea) && !esta_conectado(i,2) ){ 
         //si el bloque termina con una condicion if
         // sin else:
-        // --> conectar el bloque del if con el siguiente y con el siguiente que tenga igual o menor identacion
+        // --> conectar el bloque del if con el siguiente y con el siguiente que tenga igual o menor indentacion
         // con else:
         // --> conectar el bloque con el siguiente y el siguiente despues del else
         // --> la ultima instruccion contenida en el if debe estar conectada con lo mismo que se conecta la instruccion final del else
@@ -406,7 +406,7 @@ int main(){
         }else if((es_def(linea)||es_func(linea)) && !esta_conectado(i,1)){
         // si es una instruccion simple
         // --> conectar con el siguiente (a no ser que ya este conectado)
-        //si el bloque actual termina con igual identacion con la que comienza el bloque siguiente entonces conectar directo
+        //si el bloque actual termina con igual indentacion con la que comienza el bloque siguiente entonces conectar directo
         // --> debe se alguna condicion if o while
             CFG[i][i+1] = 1;
         }
