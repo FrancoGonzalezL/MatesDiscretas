@@ -307,6 +307,7 @@ int main(){
     int indent = 0;  
     int i = 0;
     while(getline(inputFile,line)){
+        if(line.size()==0)continue;
         //para terminar bloques si se reduce indentacion
         if(contar_indent(line)<indent && !es_else(line) && bloque.size()>0){
             i++;
@@ -319,7 +320,6 @@ int main(){
             lineas.push_back(line);
             nodo_linea.push_back(i);
             i++;
-
             bloque+=cortar_indent(line)+"\n";
             Bloques.push_back(bloque);
             bloque = "";
@@ -413,30 +413,6 @@ int main(){
     }
 
 
-
-    if(false){
-    for(int i=0;i<Bloques.size();i++){
-        cout<<"bloque "<<i+1<<":"<<endl;
-        cout<<Bloques[i]<<endl;
-    }
-    cout<<endl<<"Matriz de adyacencia:"<<endl;
-    cout<<"   ";
-    for(int i=0;i<CFG.size();i++){
-        cout<<i+1<<" ";
-        if(i<9){cout<<" ";}
-    }
-    cout<<endl;
-
-    for(int i=0;i<CFG.size();i++){
-        cout<<i+1<<" ";
-        if(i<9){cout<<" ";}
-
-        for(int j=0;j<CFG.size();j++){
-            cout<<CFG[i][j]<<"  ";
-        }
-        cout<<endl;
-    }
-    }
     cout<<"CFG"<<endl;
     cout<<"Nodos: "<<CFG.size()<<endl;
     int arcos = 0;for(auto nodo:CFG){for(int arco:nodo)arcos+=arco;}
@@ -482,6 +458,30 @@ int main(){
             }
             cout<<endl;
         }
+    }
+
+    if(false){
+    for(int i=0;i<Bloques.size();i++){
+        cout<<"bloque "<<i+1<<":"<<endl;
+        cout<<Bloques[i]<<endl;
+    }
+    cout<<endl<<"Matriz de adyacencia:"<<endl;
+    cout<<"   ";
+    for(int i=0;i<CFG.size();i++){
+        cout<<i+1<<" ";
+        if(i<9){cout<<" ";}
+    }
+    cout<<endl;
+
+    for(int i=0;i<CFG.size();i++){
+        cout<<i+1<<" ";
+        if(i<9){cout<<" ";}
+
+        for(int j=0;j<CFG.size();j++){
+            cout<<CFG[i][j]<<"  ";
+        }
+        cout<<endl;
+    }
     }
     inputFile.close();//inputFile.open() si se quiere reabrir
     return 0;
